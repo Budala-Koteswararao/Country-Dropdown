@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        ul{
+            list-style-type: none;
+        }
+        #inputs,#values{
+            display: flex;
+        }
+        #State,#City{
+            margin-left: 200px;
+        }
+        #States,#Cities{
+            margin-left: 100px;
+        }
+        button{
+            border-radius: 7px;
+            color: blue;
+            background-color: turquoise;
+        }
+        body{
+            background-color: #add8e6;
+        }
+    </style>
+</head>
+<body>
+    <div id="inputs">
+        <input type="text" id="Country" onkeyup="myFunction()" placeholder="Search For Country">
+        <input type="text" id="State" onkeyup="myFunction2()"  placeholder="Search For State">
+        <input type="text" id="City" onkeyup="myFunction3()" placeholder="Search For Cities">
+    </div>
+    <div id="values">
+        <ul id="Countries"></ul>
+        <ul id="States"></ul>
+        <ul id="Cities"></ul>
+    </div>
+    
+    <script>
+        var data;
+        var request = new XMLHttpRequest();
+        request.open('GET', 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries%2Bstates%2Bcities.json', true);
+        request.send();
+        request.responseType="json";
+        request.onload = function() {
+            if (request.status==200) {
+                data = request.response;
+                createCountryButtons();
+            }
+            else{
+                console.log(`ERROR:${request.status}`);
+            }
+        };
+        function createCountryButtons() {
+            var countriesList = document.getElementById('Countries');
+            for (var i = 0; i < data.length; i++) {
+                var li = document.createElement("li");
+                var button = document.createElement("button");
+                button.textContent = data[i].name;
+                button.addEventListener("click", function() {
+                    States_display(this.textContent);
+                });
+                li.appendChild(button);
+                countriesList.appendChild(li);
+            }
+        }
+
+
+        function myFunction() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("Country");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("Countries");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                button = li[i].getElementsByTagName("button")[0];
+                txtValue = button.textContent || button.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+        function myFunction2() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("State");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("States");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                button = li[i].getElementsByTagName("button")[0];
+                txtValue = button.textContent || button.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+        function myFunction3() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("City");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("Cities");
+            li = ul.getElementsByTagName("li");
+            for (i = 0; i < li.length; i++) {
+                button = li[i].getElementsByTagName("button")[0];
+                txtValue = button.textContent || button.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+        function States_display(country) {
+            var statesList = document.getElementById('States');
+            statesList.innerHTML = ''; 
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].name === country) {
+                    for (var j = 0; j < data[i].states.length; j++) {
+                        var li = document.createElement("li");
+                        var button = document.createElement("button");
+                        button.textContent = data[i].states[j].name;
+                        button.addEventListener("click", function() {
+                            Cities_display(this.textContent);
+                        });
+                        li.appendChild(button);
+                        statesList.appendChild(li);
+                    }
+
+                }
+            }
+        }
+        function Cities_display(state) {
+            var citiesList = document.getElementById('Cities');
+            citiesList.innerHTML = ''; 
+            for (var i = 0; i < data.length; i++) {
+                for(var j=0;j<data[i].states.length;j++){
+                    if(data[i].states[j].name==state){
+                        for(var k=0;k<data[i].states[j].cities.length;k++){
+                            var li = document.createElement("li");
+                            var button = document.createElement("button");
+                            button.textContent = data[i].states[j].cities[k].name;
+                            li.appendChild(button);
+                            citiesList.appendChild(li);
+                         }
+                    }
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
